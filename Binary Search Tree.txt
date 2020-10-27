@@ -1,0 +1,427 @@
+#include<iostream>
+#include<stdio.h>
+#include<cstdlib>
+using namespace std;
+
+
+class node
+{
+	public:
+		int data;
+		node *left;
+		node *right;
+};
+class queue
+{
+	node* a[30];
+	public:
+		int first,last;
+		queue()
+		{
+			first=last=-1;
+		}
+		~queue()
+		{  }
+	void enqueue(node *p)
+		{
+			if(first==-1)
+			{
+	                           first=last=0;
+			   a[last++]=p;
+			}
+		         else if(last==29)
+			{
+	       cout<<"\n Queue is full !";
+	        exit(1);
+			}
+			else
+			{
+			    a[last++]=p;
+			}
+		}
+
+		node* dequeue()
+		{
+			if(first== -1)
+			{
+cout<<"\n Queue is Empty !";
+			}
+			node *b;
+			if(first==last)
+			{
+			b=a[first];
+			first=last=-1;
+			}
+			else
+			{
+			b=a[first++];
+			}
+			return b;
+		}
+};
+
+class Bst
+{
+	public:
+		node
+*temp,*temp1,*temp2,*root=NULL;
+		int leaf,notLeaf;
+		Bst()
+		{
+		leaf=notLeaf=0;
+		}
+		void insert();
+		void delcopying(node *,int);
+		void delmerging(node *,int);
+		void delmerge(node *&);
+		void delcopy(node *&);
+		void search(int);
+		void searchmerging(int);
+		void preorder(node *);
+		void postorder(node *);
+	    void inorder(node *);
+	    void bfstraversal(node *);
+	    void leafnotLeaf(node *);
+	    int height(node *);
+	    void mirrorImage(node *);
+};
+
+void Bst::insert()
+{
+	int i;
+	cout<<"\n Enter the node value (  use 0 to exit ) : ";
+	cin>>i;
+	while(i!=0)
+	{
+		temp=new node;
+		temp->data=i;
+		temp->left=temp->right=NULL;
+
+		if(root==NULL)
+		{
+			root=temp;
+		}
+		else
+		{
+			temp1=root;
+			while(temp1!=NULL)
+			{
+				if(i<temp1->data)
+				{
+					temp2=temp1;
+					temp1=temp1->left;
+				}
+				else
+				{
+					temp2=temp1;
+					temp1=temp1->right;
+				}
+			}
+			if(i<temp2->data)
+			{
+				temp2->left=temp;
+			}
+			else
+			{
+				temp2->right=temp;
+			}
+		}
+		cout<<"\n Enter the node value ( use 0 to exit ) : ";
+	    cin>>i;
+	}
+}
+
+void Bst::postorder(node *t)
+{
+	if(t!=NULL)
+	{
+		postorder(t->left);
+		postorder(t->right);
+		cout<<" "<<t->data;
+	}
+}
+
+void Bst::preorder(node *p)
+{
+	if(p!=NULL)
+	{
+		cout<<" "<<p->data;
+		preorder(p->left);
+		preorder(p->right);
+	}
+}
+
+void Bst::inorder(node *p)
+{
+	if(p!=NULL)
+	{
+		inorder(p->left);
+		cout<<" "<<p->data;
+		inorder(p->right);
+	}
+}
+
+void Bst::bfstraversal(node *p)
+{
+	queue q;
+	if(p!=NULL)
+	{
+		q.enqueue(p);
+		while(q.first!=-1)
+		{
+		p=q.dequeue();
+			cout<<" "<<p->data;
+			if(p->left!=NULL)
+			    q.enqueue(p->left);
+			if(p->right!=NULL)
+			    q.enqueue(p->right);
+		}
+	}
+}
+
+void Bst::leafnotLeaf(node *p)
+{
+	if(p!=NULL)
+	{
+		if(p->left==0 && p->right==0)
+		    leaf++;
+		else
+		    notLeaf++;
+		leafnotLeaf(p->left);
+		leafnotLeaf(p->right);
+	}
+}
+
+void Bst::search(int ele)
+{
+	int flag=0;
+	temp=root;
+	while(temp)
+	{
+		if(ele==temp->data)
+		{
+			flag=1;
+			break;
+		}
+	          else if(ele<temp->data)
+		{
+		temp=temp->left;
+		}
+		else
+		{
+		temp=temp->right;
+		}
+	}
+	if(flag==1)
+	{
+		cout<<"\n Element is found !";
+	}
+	else
+	{
+		cout<<"\n Element was not found !";
+	}
+}
+
+
+int Bst::height(node *p)
+{
+	if(p==NULL)
+	    return 0;
+	int lheight=height(p->left);
+	int rheight=height(p->right);
+	if(lheight>rheight)
+	    return lheight+1;
+	else
+	    return rheight+1;
+}
+
+void Bst::mirrorImage(node *p)
+{
+	if(p==NULL)
+	    return;
+	else
+	{
+		mirrorImage(p->left);
+		mirrorImage(p->right);
+
+		temp=p->left;
+		p->left=p->right;
+		p->right=temp;
+	}
+}
+
+void Bst::delcopying(node *p,int ele)
+{
+	node *prev=NULL;
+	while(p!=NULL)
+	{
+		if(p->data==ele)
+		    break;
+		prev=p;
+		if(p->data<ele)
+		    p=p->right;
+		else
+		    p=p->left;
+	}
+	if(p!=NULL && p->data==ele)
+	{
+		if(p==root)
+		    delcopy(root);
+		else if(prev->left=p)
+		    delcopy(prev->left);
+		else
+		    delcopy(prev->right);
+	}
+	else if(root!=0)
+	    cout<<"\n KEY "<<ele<<" is not in the tree";
+	else
+	    cout<<"\n Tree is Empty";
+}
+
+void Bst::delcopy(node *&t1)
+{
+	node *prev,*tmp=t1;
+	if(t1->right==NULL)
+	    t1=t1->left;
+	else if(t1->left==NULL)
+	    t1=t1->right;
+	else
+	{
+		tmp=t1->left;
+		prev=t1;
+		while(tmp->right!=NULL)
+		{
+			prev=tmp;
+			tmp=tmp->right;
+		}
+		t1->data=tmp->data;
+		if(prev==t1)
+		    prev->left=tmp->left;
+		else
+		    prev->right=tmp->left;
+	}
+	delete tmp;
+}
+
+void Bst::delmerging(node *p,int ele)
+{
+	node *prev=NULL;
+	while(p!=NULL)
+	{
+		if(p->data==ele)
+		    break;
+		prev=p;
+		if(p->data<ele)
+		    p=p->right;
+		else
+		    p=p->left;
+	}
+	if(p!=NULL && p->data==ele)
+	{
+		if(p==root)
+		    delcopy(root);
+		else if(prev->left==p)
+		    delcopy(prev->left);
+		else
+		    delcopy(prev->right);
+	}
+	else if(root!=0)
+	    cout<<"\n KEY "<<ele<<" is not in the tree";
+	else
+	    cout<<"\n Tree is Empty";
+}
+
+void Bst::delmerge(node *&t1)
+{
+	node *tmp=t1;
+	if(t1!=NULL)
+	{
+		if(!t1->right)
+	        t1=t1->left;
+	    else if(!t1->left)
+	        t1=t1->right;
+	    else
+	    {
+	    	tmp=t1->left;
+	    	while(tmp->right!=NULL)
+	    	{
+	    		tmp=tmp->right;
+	    	}
+	    	tmp->right=t1->right;
+	    	tmp=t1;
+	    	t1=t1->left;
+    	}
+	    delete tmp;
+	}
+}
+
+int main()
+{
+	Bst ob;
+	int ch,n,ele;
+	do
+	{
+		cout<<"\n --------MAIN MENU--------";
+		cout<<"\n 1. Insertion";
+		cout<<"\n 2. Deletion by Copying";
+		cout<<"\n 3. Deletion by Merging";
+		cout<<"\n 4. Search";
+		cout<<"\n 5. Inorder, preorder and postorder traversals";
+		cout<<"\n 6. bfs Traversal";
+		cout<<"\n 7. Leaf and Non-Leaf nodes";
+		cout<<"\n 8. Height";
+		cout<<"\n 9. Mirror Image";
+		cout<<"\n Enter your choice ( use 0 to exit ) : ";
+		cin>>ch;
+
+		switch(ch)
+		{
+			case 1:
+				ob.insert();
+				break;
+			case 2:
+			    cout<<"\n Enter the key to be deleted : ";
+				cin>>ele;
+				ob.delcopying(ob.root,ele);
+				break;
+			case 3:
+			    cout<<"\n Enter the key to be deleted : ";
+				cin>>ele;
+				ob.delmerging(ob.root,el);
+				break;
+			case 4:
+			    cout<<"\n Enter the key to be searched : ";
+				cin>>ele;
+				ob.search(ele);
+				break;
+			case 5:
+			    cout<<"\n Inorder :";
+				ob.inorder(ob.root);
+				cout<<"\n Preorder :";
+				ob.preorder(ob.root);
+				cout<<"\n Postorder :";
+				ob.postorder(ob.root);
+				break;
+			case 6:
+			    cout<<"\n BFS Traversal :";
+			    ob.bfstreversal(ob.root);
+			    break;
+			case 7:
+			    ob.leafnotLeaf(ob.root);
+				cout<<"\n LEAF : "<<ob.leaf;
+				cout<<"\n NON-LEAF : "<<ob.notLeaf;
+				break;
+			case 8:
+			    ele=ob.height(ob.root);
+				cout<<"\n Height : "<<ele;
+				break;
+			case 9:
+			    ob.mirrorImage(ob.root);
+				cout<<"\n Tree Inverted Successfully !";
+				break;
+			default :
+			    break;
+		}
+	}while(ch!=0);
+return 0;
+}
